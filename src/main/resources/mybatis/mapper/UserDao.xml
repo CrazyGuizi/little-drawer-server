@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.UserDao">
+    <resultMap id="userResultMap" type="User">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="iconUrl" column="icon_url"/>
+        <result property="token" column="token"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="User">
+        INSERT INTO user (id, nick_name, username, password, icon_url, token)
+        VALUES (#{id}, #{nickName}, #{username}, #{password}, #{iconUrl}, #{token})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM user
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateById" parameterType="User">
+        UPDATE user
+        SET nick_name = #{nickName},
+            username = #{username},
+            password = #{password},
+            icon_url = #{iconUrl},
+            token = #{token}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findUserById" parameterType="Integer" resultMap="userResultMap">
+        SELECT *
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <select id="findUserByUsername" parameterType="String" resultMap="userResultMap">
+        SELECT *
+        FROM user
+        WHERE username = #{username}
+    </select>
+
+    <select id="findUserByUsernameAndPassword" resultMap="userResultMap">
+        SELECT *
+        FROM user
+        WHERE username = #{username} AND password = #{password}
+    </select>
+
+    <select id="findAll" resultMap="userResultMap">
+        SELECT * FROM user
+    </select>
+
+</mapper>

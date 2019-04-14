@@ -34,7 +34,6 @@ public class UserController {
     @RequestMapping(value = "/validateUsername", method = RequestMethod.GET)
     public BaseResponse validateUsername(@RequestBody Map<String,Object> reqMap) {
         String username = reqMap.get("username").toString();
-        System.out.println("用户名" + username);
         if (!Util.isEmpty(username)) {
             User user = mUserService.isUserExit(username);
             if (user != null) {
@@ -48,7 +47,6 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public BaseResponse login(@RequestBody User u) {
-        System.out.println(u);
         User user = mUserService.login(u.getUsername(), u.getPassword());
         if (user != null) {
             return BaseResponse.generateSuccess("登录成功", user);

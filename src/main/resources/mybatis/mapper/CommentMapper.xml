@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.CommentDao">
+
+
+    <resultMap id="commentMap" type="Comment">
+        <id property="id" column="c_id"/>
+        <result property="content" column="content"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicId" column="topic_id"/>
+
+        <association property="fromUser" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+        <collection property="replys" column="c_id" javaType="ArrayList" ofType="Reply"
+                    select="com.lidegui.littledrawer.dao.ReplyDao.findReplysByCommentId"/>
+
+    </resultMap>
+
+    <sql id="sortByDate">
+        ORDER BY date ASC
+    </sql>
+
+
+    <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment(content, date, topic_type, topic_id, user_id)
+        VALUES (#{content}, #{date, javaType=Date, jdbcType=TIMESTAMP},
+        #{topicType}, #{topicId}, #{fromUser.id})
+    </insert>
+
+    <!--虽然写这个方法，但不使用，因为删除评论实际上是把评论的内容给删除-->
+    <delete id="deleteById">
+        DELETE FROM comment
+        WHERE c_id= #{CommentId}
+    </delete>
+
+    <update id="updateComment" parameterType="Comment">
+        UPDATE comment SET
+        content = #{content},
+        date = #{date, javaType=Date, jdbcType=TIMESTAMP},
+        topic_type = #{topicType}
+        WHERE c_id = #{id}
+    </update>
+
+    <update id="updateCommentContent">
+        UPDATE comment SET
+        content = '该评论已删除'
+        WHERE c_id = #{commentId}
+    </update>
+
+    <select id="findCommentById" resultMap="commentMap">
+        SELECT * FROM comment
+        WHERE c_id = #{id}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findNewsCommentsByNewsId" resultMap="commentMap">
+        SELECT * FROM comment
+        WHERE topic_type = 0 AND topic_id = #{newsId}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findVideoCommentsByNewsId" resultMap="commentMap">
+        SELECT * FROM comment
+        WHERE topic_type = 1 AND topic_id = #{videoId}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findCommentsByUserId" resultMap="commentMap">
+        SELECT * FROM comment
+        WHERE user_id = #{userId}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findAllComments" resultMap="commentMap">
+        SELECT * FROM comment
+        <include refid="sortByDate"/>
+    </select>
+
+
+</mapper>

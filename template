@@ -1,0 +1,12 @@
+@RequestMapping(value = "", method = RequestMethod.POST)
+@RequestMapping(value = "", method = RequestMethod.GET)
+
+public BaseResponse  (@RequestBody Map<String, String> map) {
+
+    return BaseResponse.generateFail("");
+}
+
+public BaseResponse  (@RequestBody ) {
+
+    return BaseResponse.generateFail("");
+}

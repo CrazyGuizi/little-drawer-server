@@ -40,6 +40,13 @@ public interface UserDao {
     User findUserById(Integer id);
 
     /**
+     * 查询用户信息（不包括敏感信息）
+     * @param id
+     * @return
+     */
+    User findUserInfoById(Integer id);
+
+    /**
      * 查询用户记录
      * @param username 用户名
      * @return

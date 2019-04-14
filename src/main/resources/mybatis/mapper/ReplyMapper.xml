@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.ReplyDao">
+
+    <resultMap id="replyMap" type="Reply">
+        <id property="id" column="r_id"/>
+        <result property="content" column="content"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="commentId" column="comment_id"/>
+        <result property="replyType" column="reply_type"/>
+        <result property="replyId" column="reply_id"/>
+
+        <association property="fromUser" column="from_user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+        <association property="toUser" column="to_user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+    </resultMap>
+
+    <sql id="sortByDate">
+        ORDER BY date ASC
+    </sql>
+
+    <insert id="insert" parameterType="Reply" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reply(content, date, comment_id, reply_type, reply_id,from_user_id,to_user_id)
+        VALUES (#{content}, #{date, javaType=Date, jdbcType=TIMESTAMP},
+        #{commentId}, #{replyType}, #{replyId}, #{fromUser.id}, #{toUser.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM reply
+        WHERE r_id = #{replyId}
+    </delete>
+
+    <update id="updateReply" parameterType="Reply">
+        UPDATE reply SET
+        content = #{content},
+        date = #{date, javaType=Date, jdbcType=TIMESTAMP},
+        comment_id = #{commentId}
+        WHERE r_id = #{id}
+    </update>
+
+    <update id="updateReplyContent">
+        UPDATE reply SET
+        content = '该回复已删除'
+        WHERE r_id = #{replyId}
+    </update>
+
+    <select id="findReplyById" resultMap="replyMap">
+        SELECT * FROM reply
+        WHERE r_id = #{replyId}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findAllReplys" resultMap="replyMap">
+        SELECT * FROM reply
+    </select>
+
+    <select id="findReplysByUserId" resultMap="replyMap">
+        SELECT * FROM reply
+        WHERE from_user_id = #{userId}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findReplysByCommentId" resultMap="replyMap">
+        SELECT * FROM reply
+        WHERE comment_id = #{commentId}
+        <include refid="sortByDate"/>
+    </select>
+
+
+</mapper>

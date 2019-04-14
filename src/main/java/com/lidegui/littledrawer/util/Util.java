@@ -13,6 +13,14 @@ import java.util.Random;
  */
 public class Util {
 
+    private static boolean isDebug = true;
+
+    public static void log(Object o) {
+        if (isDebug) {
+            System.out.println(o);
+        }
+    }
+
     public static Date getDateNow() {
         return new Timestamp(new Date().getTime());
     }
@@ -31,6 +39,23 @@ public class Util {
 
     public static String getIconRandom() {
         return Constant.USER_DEFAULT_ICON[new Random().nextInt(Constant.USER_DEFAULT_ICON.length)];
+    }
+
+    public static TopicEnum getTopic(int index) {
+        TopicEnum topicEnum = null;
+        switch (index) {
+            case 0:
+                topicEnum = TopicEnum.NEWS;
+                break;
+            case 1:
+                topicEnum = TopicEnum.VIDEO;
+                break;
+            case 2:
+                topicEnum = TopicEnum.PICTURE;
+                break;
+        }
+
+        return topicEnum;
     }
 
     public static void main(String[] args) {

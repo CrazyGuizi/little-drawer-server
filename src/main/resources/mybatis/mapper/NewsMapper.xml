@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.NewsDao">
+    <resultMap id="newsResultMap" type="News">
+        <id property="id" column="n_id"/>
+        <result property="title" column="title"/>
+        <result property="column" column="column"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="content" column="content"/>
+        <result property="style" column="style"/>
+        <association property="author" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+        <collection property="picUrls" column="n_id" javaType="ArrayList" ofType="String"
+                    select="com.lidegui.littledrawer.dao.PictureDao.findPictureUrlsByTopicId"/>
+
+    </resultMap>
+
+    <insert id="insert" parameterType="News" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO news(title, `column`, date, content, style, user_id)
+        VALUES (#{title}, #{column}, #{date,javaType=DATE,jdbcType=TIMESTAMP}, #{content}, #{style}, #{author.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM news
+        WHERE n_id = #{id}
+    </delete>
+
+    <delete id="deleteByKeyWord">
+        DELETE FROM news
+        WHERE title LIKE CONCAT('%',${word},'%') OR content LIKE ${word}
+    </delete>
+
+    <update id="update" parameterType="News">
+        UPDATE news SET
+        title = #{title},
+        `column` = #{column},
+        date = #{date, javaType=Date, jdbcType=TIMESTAMP},
+        content = #{content},
+        style = #{style}
+        WHERE n_id = #{id}
+    </update>
+
+    <select id="findById" parameterType="News" resultMap="newsResultMap">
+        SELECT *
+        FROM news
+        WHERE n_id = #{id}
+    </select>
+
+    <select id="findByColumn" resultMap="newsResultMap">
+        SELECT *
+        FROM news
+        WHERE `column` = #{column}
+    </select>
+
+    <select id="findByUserId" resultMap="newsResultMap">
+        SELECT *
+        FROM news
+        WHERE user_id = #{id}
+    </select>
+
+    <select id="findByKeyWord" resultMap="newsResultMap">
+        SELECT *
+        FROM news
+        WHERE title LIKE CONCAT('%',#{keyword},'%') OR content LIKE CONCAT('%', #{keyWord}, '%')
+    </select>
+
+    <select id="findAll" resultMap="newsResultMap">
+        SELECT *
+        FROM news
+    </select>
+
+
+</mapper>

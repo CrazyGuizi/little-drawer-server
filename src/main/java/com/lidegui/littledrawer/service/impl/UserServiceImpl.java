@@ -29,7 +29,8 @@ public class UserServiceImpl implements UserService {
         if (isUserExit(user.getUsername()) == null) {
             int insert = mUserDao.insert(user);
             if (insert > 0) {
-                return user;
+                // 不直接返回该用户是避免这个用户本身就少数据
+                return mUserDao.findUserByUsernameAndPassword(user.getUsername(), user.getPassword());
             }
         }
 

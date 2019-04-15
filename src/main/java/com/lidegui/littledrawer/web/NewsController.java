@@ -4,8 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.lidegui.littledrawer.bean.News;
 import com.lidegui.littledrawer.dto.BaseResponse;
 import com.lidegui.littledrawer.service.NewsService;
+import com.lidegui.littledrawer.util.Constant;
 import com.lidegui.littledrawer.util.Util;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +20,13 @@ import java.util.*;
  */
 
 @RestController
-@RequestMapping("api/news")
+@RequestMapping(Constant.API_NEWS)
 public class NewsController {
 
     @Autowired
     private NewsService mNewsService;
 
-    @RequestMapping(value = "/addNews", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_ADD_NEWS, method = RequestMethod.POST)
     public BaseResponse addNews(@RequestBody News news) {
         news.setDate(Util.getDateNow());
         News addNews = mNewsService.addNews(news);
@@ -37,7 +37,7 @@ public class NewsController {
         return BaseResponse.generateFail("发表失败");
     }
 
-    @RequestMapping(value = "/deleteNewsById", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_DELETE_NEWS_BY_ID, method = RequestMethod.POST)
     public BaseResponse deleteNewsById(@RequestBody Map<String, String> map) {
         String id = map.get("newsId");
         Util.log(id);
@@ -50,7 +50,7 @@ public class NewsController {
         return BaseResponse.generateFail("删除失败");
     }
 
-    @RequestMapping(value = "/updateNewsById", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_UPDATE_NEWS_BY_ID, method = RequestMethod.POST)
     public BaseResponse updateNewsById(@RequestBody News news) {
         if (news != null) {
             news.setDate(Util.getDateNow());
@@ -63,7 +63,7 @@ public class NewsController {
         return BaseResponse.generateFail("更新失败");
     }
 
-    @RequestMapping(value = "/getNewsById", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_GET_NEWS_BY_ID, method = RequestMethod.POST)
     public BaseResponse getNewsById(@RequestBody Map<String, String> map) {
         String id = map.get("newsId");
         if (!Util.isEmpty(id)) {
@@ -75,10 +75,17 @@ public class NewsController {
         return BaseResponse.generateFail("获取失败");
     }
 
-    @RequestMapping(value = "/getNewsByColumn", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_GET_NEWS_BY_COLUMN, method = RequestMethod.POST)
     public BaseResponse getNewsByColumn(@RequestBody Map<String, String> map) {
         String col = map.get("column");
         if (!Util.isEmpty(col)) {
+            // 分页
+            String pageNum = map.get("pageNum");
+            String pageSize = map.get("pageSize");
+            if (!Util.isEmpty(pageNum) && !Util.isEmpty(pageSize)) {
+                PageHelper.startPage(Integer.parseInt(pageNum), Integer.parseInt(pageSize));
+            }
+
             List<News> newsList = mNewsService.getNewsByColumn(col);
             if (newsList != null && newsList.size() > 0) {
                 return BaseResponse.generateSuccess("获取成功", newsList);
@@ -88,7 +95,7 @@ public class NewsController {
         return BaseResponse.generateFail("获取失败");
     }
 
-    @RequestMapping(value = "/getNewsByUserId", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_GET_NEWS_BY_USER_ID, method = RequestMethod.POST)
     public BaseResponse getNewsByUserId(@RequestBody Map<String, String> map) {
         String id = map.get("userId");
         if (!Util.isEmpty(id)) {
@@ -100,7 +107,7 @@ public class NewsController {
         return BaseResponse.generateFail("获取失败");
     }
 
-    @RequestMapping(value = "/getNewsRandom", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_NEWS_GET_NEWS_RANDOM, method = RequestMethod.POST)
     public BaseResponse getNewsRandom(@RequestBody Map<String, String> map) {
         String column = map.get("column");
         String pageNum = map.get("pageNum");
@@ -127,8 +134,8 @@ public class NewsController {
     }
 
 
-    @RequestMapping(value = "/searchNews", method = RequestMethod.POST)
-    public BaseResponse d (@RequestBody Map<String, String> map) {
+    @RequestMapping(value = Constant.API_NEWS_SEARCH_NEWS, method = RequestMethod.POST)
+    public BaseResponse searchNews (@RequestBody Map<String, String> map) {
         String key = map.get("keyWord");
         if (!Util.isEmpty(key)) {
             List<News> list = mNewsService.searchNews(key);

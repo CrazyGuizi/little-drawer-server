@@ -2,6 +2,7 @@ package com.lidegui.littledrawer.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.lidegui.littledrawer.bean.Video;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -56,6 +57,45 @@ public class Util {
         }
 
         return topicEnum;
+    }
+
+    public static VideoType getVideoType(int index) {
+        VideoType type = null;
+        if (index == VideoType.FUNNY.typeIndex) {
+            type = VideoType.FUNNY;
+        } else if (index == VideoType.GAME.typeIndex) {
+            type = VideoType.GAME;
+        } else if (index == VideoType.LIFE.typeIndex) {
+            type = VideoType.LIFE;
+        } else if (index == VideoType.FILM.typeIndex) {
+            type = VideoType.FILM;
+        } else if (index == VideoType.SCIENCE.typeIndex) {
+            type = VideoType.SCIENCE;
+        } else if (index == VideoType.OTHER.typeIndex) {
+            type = VideoType.OTHER;
+        }
+
+        return type;
+    }
+
+    public static VideoType getVideoType(String typeName) {
+        VideoType type = null;
+
+        if (VideoType.FUNNY.typeName.equals(typeName)) {
+            type = VideoType.FUNNY;
+        } else if (VideoType.GAME.typeName.equals(typeName)) {
+            type = VideoType.GAME;
+        } else if (VideoType.LIFE.typeName.equals(typeName)) {
+            type = VideoType.LIFE;
+        } else if (VideoType.FILM.typeName.equals(typeName)) {
+            type = VideoType.FILM;
+        } else if (VideoType.SCIENCE.typeName.equals(typeName)) {
+            type = VideoType.SCIENCE;
+        } else if (VideoType.OTHER.typeName.equals(typeName)) {
+            type = VideoType.OTHER;
+        }
+
+        return type;
     }
 
     public static void main(String[] args) {

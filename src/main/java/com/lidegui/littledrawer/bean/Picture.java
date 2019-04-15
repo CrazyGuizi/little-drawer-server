@@ -11,6 +11,8 @@ public class Picture {
     private String title;
     private String url;
     private String content;
+    private int like;
+    private int collections;
     private Date date;
     private int topicType;
     private int topicId;
@@ -46,6 +48,22 @@ public class Picture {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getLike() {
+        return like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
+
+    public int getCollections() {
+        return collections;
+    }
+
+    public void setCollections(int collections) {
+        this.collections = collections;
     }
 
     public Date getDate() {

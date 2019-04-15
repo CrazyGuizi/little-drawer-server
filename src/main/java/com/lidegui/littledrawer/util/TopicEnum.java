@@ -5,8 +5,8 @@ public enum TopicEnum {
     VIDEO(1,"视频"),
     PICTURE(2, "图片");
 
-    int topicType;
-    String topicName;
+    public int topicType;
+    public String topicName;
 
     TopicEnum(int topicType, String topicName) {
         this.topicType = topicType;

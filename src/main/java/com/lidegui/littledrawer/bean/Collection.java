@@ -4,16 +4,14 @@ import java.util.Date;
 
 /**
  * @Author: lidegui
- * @Date:Created in 21:10 2019/4/13
+ * @Date:Created in 17:25 2019/4/15
  */
-public class Like {
-
+public class Collection {
     private int id;
     private Date date;
-    private int status;
     private int topicType;
     private int topicId;
-    private User liker;
+    private User collector;
 
     public int getId() {
         return id;
@@ -29,14 +27,6 @@ public class Like {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public int getTopicType() {
@@ -55,11 +45,11 @@ public class Like {
         this.topicId = topicId;
     }
 
-    public User getLiker() {
-        return liker;
+    public User getCollector() {
+        return collector;
     }
 
-    public void setLiker(User liker) {
-        this.liker = liker;
+    public void setCollector(User collector) {
+        this.collector = collector;
     }
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.VideoDao">
+    <resultMap id="videoMap" type="Video">
+        <id property="id" column="v_id"/>
+        <result property="title" column="title"/>
+        <result property="describe" column="describe"/>
+        <result property="posterUrl" column="poster_url"/>
+        <result property="sourceUrl" column="source_url"/>
+        <result property="click" column="click"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="typeIndex" column="type_index"/>
+        <result property="typeName" column="type_name"/>
+
+        <association property="like" column="v_id" javaType="Integer"
+                     select="com.lidegui.littledrawer.dao.LikeDao.findVideoLikeCountByTopicId"/>
+
+        <association property="author" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+    </resultMap>
+
+    <insert id="insert" parameterType="Video" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO video(title, `describe`, poster_url, source_url,click, date, type_index,type_name, user_id)
+        VALUES(#{title},
+        #{describe},
+        #{posterUrl},
+        #{sourceUrl},
+        #{click},
+        #{date,javaType=DATE,jdbcType=TIMESTAMP},
+        #{typeIndex},
+        #{typeName},
+        #{author.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM video
+        WHERE v_id = #{videoId}
+    </delete>
+
+    <update id="updateVideo" parameterType="Video">
+        UPDATE video SET
+        title = #{title},
+        describe = #{describe},
+        poster_url = #{posterUrl},
+        source_url = #{sourceUrl},
+        click = #{click},
+        date = #{date, javaType=Date, jdbcType=TIMESTAMP},
+        user_id = #{author.id},
+        WHERE v_id = #{id}
+    </update>
+
+    <update id="updateVideoClick" parameterType="Video">
+        UPDATE video SET
+        click = (SELECT click FROM video where v_id = #{videoId})+1
+        WHERE v_id = #{videoId}
+    </update>
+
+    <select id="findById" parameterType="Video" resultMap="videoMap">
+        SELECT *
+        FROM video
+        WHERE v_id = #{videoId}
+    </select>
+
+    <select id="findByTypeIndex" resultMap="videoMap">
+        SELECT *
+        FROM video
+        WHERE type_index = #{typeIndex}
+    </select>
+
+    <select id="findByTypeName" resultMap="videoMap">
+        SELECT *
+        FROM video
+        WHERE type_name = #{typeName}
+    </select>
+
+    <select id="findByUserId" resultMap="videoMap">
+        SELECT *
+        FROM video
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findAll" resultMap="videoMap">
+        SELECT *
+        FROM video
+    </select>
+
+
+</mapper>

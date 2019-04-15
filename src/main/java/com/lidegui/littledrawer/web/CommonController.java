@@ -3,11 +3,16 @@ package com.lidegui.littledrawer.web;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.lidegui.littledrawer.bean.Collection;
 import com.lidegui.littledrawer.bean.Comment;
+import com.lidegui.littledrawer.bean.Like;
 import com.lidegui.littledrawer.bean.Reply;
 import com.lidegui.littledrawer.dto.BaseResponse;
+import com.lidegui.littledrawer.service.CollectionService;
 import com.lidegui.littledrawer.service.CommentService;
+import com.lidegui.littledrawer.service.LikeService;
 import com.lidegui.littledrawer.service.ReplyService;
+import com.lidegui.littledrawer.util.Constant;
 import com.lidegui.littledrawer.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +26,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("api/common")
+@RequestMapping(Constant.API_COMMON)
 public class CommonController {
 
     @Autowired
@@ -30,9 +35,15 @@ public class CommonController {
     @Autowired
     private ReplyService mReplyService;
 
-/**************************************评论相关******************************************/
-    @RequestMapping(value = "/addComment", method = RequestMethod.POST)
-    public BaseResponse addComment (@RequestBody Comment comment) {
+    @Autowired
+    private LikeService mLikeService;
+
+    @Autowired
+    private CollectionService mCollectionService;
+
+    /**************************************评论相关******************************************/
+    @RequestMapping(value = Constant.API_COMMON_ADD_COMMENT, method = RequestMethod.POST)
+    public BaseResponse addComment(@RequestBody Comment comment) {
         if (comment != null) {
             comment.setDate(Util.getDateNow());
             Comment addComment = mCommentService.addComment(comment);
@@ -44,8 +55,8 @@ public class CommonController {
         return BaseResponse.generateFail("评论失败");
     }
 
-    @RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
-    public BaseResponse deleteComment (@RequestBody Map<String, String> map) {
+    @RequestMapping(value = Constant.API_COMMON_DELETE_COMMENT, method = RequestMethod.POST)
+    public BaseResponse deleteComment(@RequestBody Map<String, String> map) {
         String id = map.get("commentId");
         if (!Util.isEmpty(id)) {
             if (mCommentService.deleteComment(Integer.parseInt(id)) > 0) {
@@ -56,8 +67,9 @@ public class CommonController {
         return BaseResponse.generateFail("删除失败");
     }
 
-     @RequestMapping(value = "/getCommentsByTopic", method = RequestMethod.POST)
-    public BaseResponse getCommentsByTopic (@RequestBody Map<String, String> map) {
+    @RequestMapping(value = Constant.API_COMMON_GET_COMMENTS_BY_TOPIC,
+            method = RequestMethod.POST)
+    public BaseResponse getCommentsByTopic(@RequestBody Map<String, String> map) {
         String id = map.get("topicId");
         String type = map.get("topicType");
         if (!Util.isEmpty(id) && !Util.isEmpty(type)) {
@@ -65,14 +77,17 @@ public class CommonController {
 
             if (comments != null && comments.size() > 0) {
                 return BaseResponse.generateSuccess("获取评论成功", comments);
+            } else {
+                return BaseResponse.generateFail("暂无评论");
             }
         }
 
         return BaseResponse.generateFail("获取评论失败");
     }
-/**************************************回复相关******************************************/
-    @RequestMapping(value = "/addReply", method = RequestMethod.POST)
-    public BaseResponse addReply (@RequestBody Reply reply) {
+
+    /**************************************回复相关******************************************/
+    @RequestMapping(value = Constant.API_COMMON_ADD_REPLY, method = RequestMethod.POST)
+    public BaseResponse addReply(@RequestBody Reply reply) {
         if (reply != null) {
             reply.setDate(Util.getDateNow());
             Reply addReply = mReplyService.addReply(reply);
@@ -84,8 +99,8 @@ public class CommonController {
         return BaseResponse.generateFail("回复失败");
     }
 
-    @RequestMapping(value = "/deleteReply", method = RequestMethod.POST)
-    public BaseResponse deleteReply (@RequestBody Map<String, String> map) {
+    @RequestMapping(value = Constant.API_COMMON_DELETE_REPLY, method = RequestMethod.POST)
+    public BaseResponse deleteReply(@RequestBody Map<String, String> map) {
         String id = map.get("replyId");
         if (!Util.isEmpty(id)) {
             if (mReplyService.deleteReply(Integer.parseInt(id)) > 0) {
@@ -96,8 +111,9 @@ public class CommonController {
         return BaseResponse.generateFail("删除失败");
     }
 
-     @RequestMapping(value = "/getReplysByCommentId", method = RequestMethod.POST)
-    public BaseResponse getReplysByCommentId (@RequestBody Map<String, String> map) {
+    @RequestMapping(value = Constant.API_COMMON_GET_REPLYS_BY_COMMENT_ID,
+            method = RequestMethod.POST)
+    public BaseResponse getReplysByCommentId(@RequestBody Map<String, String> map) {
         String id = map.get("commentId");
         if (!Util.isEmpty(id)) {
             List<Reply> replyList = mReplyService.getReplysByCommentId(Integer.parseInt(id));
@@ -111,4 +127,119 @@ public class CommonController {
     }
 
 
+    /**************************************点赞相关******************************************/
+
+    @RequestMapping(value = Constant.API_COMMON_ADD_LIKE, method = RequestMethod.POST)
+    public BaseResponse addLike(@RequestBody Like like) {
+        if (like != null) {
+            like.setDate(Util.getDateNow());
+            Like addLike = mLikeService.addLike(like);
+            if (addLike != null) {
+                return BaseResponse.generateSuccess("点赞成功", addLike);
+            }
+
+        }
+        return BaseResponse.generateFail("点赞失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_SET_LIKE_STATUS, method = RequestMethod.POST)
+    public BaseResponse setLikeStatus(@RequestBody Like like) {
+        if (like != null) {
+            if (like.getId() <= 0) {
+                // 用户第一次点赞
+                like.setDate(Util.getDateNow());
+                like.setStatus(1);
+                Like addLike = mLikeService.addLike(like);
+                if (addLike != null) {
+                    return BaseResponse.generateSuccess("点赞状态更改成功", addLike);
+                }
+            } else {
+                Like likeStatus = mLikeService.changeLikeStatus(like);
+                if (likeStatus != null) {
+                    return BaseResponse.generateSuccess("点赞状态更改成功", likeStatus);
+                }
+            }
+        }
+
+        return BaseResponse.generateFail("点赞失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_GET_LIKE_STATUS, method = RequestMethod.POST)
+    public BaseResponse getLikeStatus(@RequestBody Map<String, Integer> map) {
+        int topicType = 0;
+        int topicId = 0;
+        int userId = 0;
+        try {
+            topicType = map.get("topicType");
+            topicId = map.get("topicId");
+            userId = map.get("userId");
+        } catch (Exception e) {
+            return BaseResponse.generateFail("请求参数有误");
+        }
+
+        if (topicId != 0 && topicId != 0 && userId != 0) {
+            Like likeStatus = mLikeService.findUserLikeStatus(topicType, topicId, userId);
+            if (likeStatus != null) {
+                return BaseResponse.generateSuccess("获取成功", likeStatus);
+            } else {
+                return BaseResponse.generateFail("用户还没有点赞");
+            }
+        }
+
+        return BaseResponse.generateFail("获取失败");
+    }
+
+
+    /**************************************收藏相关******************************************/
+
+    @RequestMapping(value = Constant.API_COMMON_ADD_COLLECTION, method = RequestMethod.POST)
+    public BaseResponse addCollection(@RequestBody Collection collection) {
+        if (collection != null) {
+            collection.setDate(Util.getDateNow());
+            Collection addCollection = mCollectionService.addCollection(collection);
+            if (addCollection != null) {
+                return BaseResponse.generateSuccess("收藏成功", addCollection);
+            }
+
+        }
+        return BaseResponse.generateFail("收藏失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_CANCEL_COLLECTION, method = RequestMethod.POST)
+    public BaseResponse cancelCollection(@RequestBody Map<String, Integer> map) {
+        int id = map.get("collectionId");
+        if (id > 0) {
+            int i = mCollectionService.deleteCollection(id);
+            if (i > 0) {
+                return BaseResponse.generateSuccess("取消收藏成功", null);
+            }
+        }
+
+        return BaseResponse.generateFail("取消收藏失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_GET_COLLECTION_STATUS, method = RequestMethod.POST)
+    public BaseResponse getCollectionStatus(@RequestBody Map<String, Integer> map) {
+        int topicType = 0;
+        int topicId = 0;
+        int userId = 0;
+        try {
+            topicType = map.get("topicType");
+            topicId = map.get("topicId");
+            userId = map.get("userId");
+        } catch (Exception e) {
+            return BaseResponse.generateFail("请求参数有误");
+        }
+
+        if (topicId != 0 && topicId != 0 && userId != 0) {
+            Collection status = mCollectionService.findUserCollectionStatus(topicType, topicId, userId);
+            if (status != null) {
+                return BaseResponse.generateSuccess("获取成功", status);
+            } else {
+                return BaseResponse.generateFail("用户还没有收藏");
+            }
+        }
+
+        return BaseResponse.generateFail("获取失败");
+    }
 }

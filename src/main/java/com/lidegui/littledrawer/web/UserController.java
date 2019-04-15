@@ -1,5 +1,6 @@
 package com.lidegui.littledrawer.web;
 
+import com.alibaba.fastjson.JSON;
 import com.lidegui.littledrawer.bean.User;
 import com.lidegui.littledrawer.dto.BaseResponse;
 import com.lidegui.littledrawer.service.UserService;
@@ -20,7 +21,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping(Constant.API_USER)
 public class UserController {
 
     @Autowired
@@ -31,7 +32,7 @@ public class UserController {
      * @param reqMap
      * @return
      */
-    @RequestMapping(value = "/validateUsername", method = RequestMethod.GET)
+    @RequestMapping(value = Constant.API_USER_VALIDATE_USERNAME, method = RequestMethod.POST)
     public BaseResponse validateUsername(@RequestBody Map<String,Object> reqMap) {
         String username = reqMap.get("username").toString();
         if (!Util.isEmpty(username)) {
@@ -45,7 +46,7 @@ public class UserController {
         return BaseResponse.generateFail("用户不存在");
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_USER_LOGIN, method = RequestMethod.POST)
     public BaseResponse login(@RequestBody User u) {
         User user = mUserService.login(u.getUsername(), u.getPassword());
         if (user != null) {
@@ -56,7 +57,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_USER_REGISTER, method = RequestMethod.POST)
     public BaseResponse register(@RequestBody User user) {
         user.setIconUrl(Util.getIconRandom());
         User register = mUserService.register(user);
@@ -67,7 +68,7 @@ public class UserController {
         return BaseResponse.generateSuccess("注册失败", user);
     }
 
-    @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_USER_UPDATE_USER, method = RequestMethod.POST)
     public BaseResponse updateUser(@RequestBody User u) {
         User user = mUserService.updateUser(u);
         if (user != null) {
@@ -77,7 +78,7 @@ public class UserController {
         return BaseResponse.generateFail("更新失败");
     }
 
-    @RequestMapping(value = "getAllUsers", method = RequestMethod.GET)
+    @RequestMapping(value = Constant.API_USER_GET_ALL_USERS, method = RequestMethod.GET)
     public BaseResponse getAllUser() {
         List<User> allUsers = mUserService.getAllUsers();
         if (allUsers != null) {
@@ -86,7 +87,7 @@ public class UserController {
         return BaseResponse.generateFail("获取失败");
     }
 
-    @RequestMapping(value = "deleteUser", method = RequestMethod.POST)
+    @RequestMapping(value = Constant.API_USER_DELETE_USER, method = RequestMethod.POST)
     public BaseResponse deleteUser(@RequestBody Map<String, Object> map) {
         if (!Util.isEmpty(map.get("id").toString())) {
             int id = Integer.parseInt(map.get("id").toString());

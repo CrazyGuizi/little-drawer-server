@@ -13,7 +13,7 @@
                      select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
 
         <collection property="picUrls" column="n_id" javaType="ArrayList" ofType="String"
-                    select="com.lidegui.littledrawer.dao.PictureDao.findPictureUrlsByTopicId"/>
+                    select="com.lidegui.littledrawer.dao.PictureDao.findNewsPictureUrlsByTopicId"/>
 
     </resultMap>
 

@@ -3,6 +3,7 @@ package com.lidegui.littledrawer.service.impl;
 import com.lidegui.littledrawer.bean.Video;
 import com.lidegui.littledrawer.dao.VideoDao;
 import com.lidegui.littledrawer.service.VideoService;
+import com.lidegui.littledrawer.util.VideoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,6 @@ public class VideoServiceImpl implements VideoService {
     public Video addVideo(Video video) {
         if (mVideoDao.insert(video) > 0) {
             return mVideoDao.findById(video.getId());
-
         }
         return null;
     }
@@ -35,7 +35,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public Video updateVideo(Video video) {
         if (mVideoDao.updateVideo(video) > 0) {
-            return mVideoDao.findById(video.getId());
+            mVideoDao.findById(video.getId());
         }
 
         return null;
@@ -52,8 +52,13 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public List<Video> getVideosByType(String type) {
-        return mVideoDao.findByType(type);
+    public List<Video> getVideosByTypeIndex(int typeIndex) {
+        return mVideoDao.findByTypeIndex(typeIndex);
+    }
+
+    @Override
+    public List<Video> getVideosByTypeName(String typeName) {
+        return mVideoDao.findByTypeName(typeName);
     }
 
     @Override

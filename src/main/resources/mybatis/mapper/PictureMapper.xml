@@ -2,9 +2,91 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.lidegui.littledrawer.dao.PictureDao">
-    <select id="findPictureUrlsByTopicId" resultType="String">
+
+    <resultMap id="PictureMap" type="Picture">
+        <id property="id" column="p_id"/>
+        <result property="title" column="title"/>
+        <result property="url" column="url"/>
+        <result property="content" column="content"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicId" column="topic_id"/>
+
+        <association property="like" column="p_id" javaType="Integer"
+                     select="com.lidegui.littledrawer.dao.LikeDao.findPictureLikeCountByTopicId"/>
+
+        <association property="collections" column="p_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.CollectionDao.findPictureCollectionCountByTopicId"/>
+
+        <association property="author" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Picture">
+        INSERT INTO picture(title, url, content, date, topic_type, topic_id, user_id)
+        VALUES (#{title}, #{url}, #{content},
+         #{date,javaType=DATE,jdbcType=TIMESTAMP},
+          #{topicType}, #{topicId}, #{author.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM picture
+        WHERE p_id = #{pictureId}
+    </delete>
+
+    <update id="updatePicture" parameterType="Picture">
+        UPDATE picture
+        SET
+            title = #{title},
+            date = #{date, javaType=Date, jdbcType=TIMESTAMP},
+            url = #{url},
+            content = #{content},
+            topic_type = #{topicType},
+            topic_id   = #{topicId},
+            user_id    = #{author.id}
+        WHERE p_id = #{id}
+    </update>
+
+    <select id="findById" resultMap="PictureMap">
+        SELECT *
+        FROM picture
+        WHERE p_id = #{pictureId}
+    </select>
+
+    <select id="findByUserId" resultMap="PictureMap">
+        SELECT *
+        FROM picture
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findPicturesByTopic" resultMap="PictureMap">
+        SELECT *
+        FROM picture
+        WHERE topic_type = #{topicType} AND topic_id = #{topicId}
+    </select>
+
+    <select id="findNewsPictureUrlsByTopicId" resultType="String">
         SELECT url
         FROM picture
-        WHERE topic_type = 0 AND topic_id = #{topic_id}
+        WHERE topic_type = 0 AND topic_id = #{topicId}
     </select>
+
+    <select id="findVideoPosterUrlByTopicId" resultType="String">
+        SELECT url
+        FROM picture
+        WHERE topic_type = 1 AND topic_id = #{topicId}
+    </select>
+
+    <select id="findAll" resultMap="PictureMap">
+        SELECT *
+        FROM picture
+    </select>
+
+    <select id="findFunnyPictures" resultMap="PictureMap">
+        SELECT *
+        FROM picture
+        WHERE topic_type = 2
+    </select>
+
 </mapper>

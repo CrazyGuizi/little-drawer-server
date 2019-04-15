@@ -21,7 +21,6 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public Reply addReply(Reply reply) {
-        System.out.println("插入前" + reply.getId());
         if (mReplyDao.insert(reply) > 0) {
             return mReplyDao.findReplyById(reply.getId());
         }

@@ -1,6 +1,7 @@
 package com.lidegui.littledrawer.service;
 
 import com.lidegui.littledrawer.bean.Video;
+import com.lidegui.littledrawer.util.VideoType;
 
 import java.util.List;
 
@@ -20,7 +21,9 @@ public interface VideoService {
 
     public List<Video> getAllVideos();
 
-    public List<Video> getVideosByType(String type);
+    public List<Video> getVideosByTypeIndex(int typeIndex);
+
+    public List<Video> getVideosByTypeName(String typeName);
 
     public List<Video> getVideosByUserId(int userId);
 }

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.LikeDao">
+    <resultMap id="likeMap" type="Like">
+        <id property="id" column="l_id"/>
+        <result property="status" column="status"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicId" column="topic_id"/>
+
+        <association property="liker" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+    </resultMap>
+
+    <insert id="insert" parameterType="Like" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `like` (status, date, topic_type, topic_id, user_id)
+        VALUES (#{status}, #{date,javaType=DATE,jdbcType=TIMESTAMP}, #{topicType}, #{topicId}, #{liker.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM `like`
+        WHERE l_id = #{likeId}
+    </delete>
+
+    <update id="updateLike" parameterType="Like">
+        UPDATE `like`
+        SET
+            status     = #{status},
+            date       = #{date, javaType=Date, jdbcType=TIMESTAMP},
+            topic_type = #{topicType},
+            topic_id   = #{topicId},
+            user_id    = #{liker.id}
+        WHERE l_id = #{id}
+    </update>
+
+    <update id="updateLikeStatus">
+        UPDATE `like`
+        SET
+            status = #{status}
+        WHERE l_id = #{likeId}
+    </update>
+
+    <select id="findById" resultMap="likeMap">
+        SELECT *
+        FROM `like`
+        WHERE l_id = #{likeId}
+    </select>
+
+    <select id="findByUserId" resultMap="likeMap">
+        SELECT *
+        FROM `like`
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findUserLikeStatus" resultMap="likeMap">
+        SELECT *
+        FROM `like`
+        WHERE topic_type = #{topicType} AND topic_id = #{topicId} AND user_id = #{userId}
+    </select>
+
+    <select id="findVideoLikeCountByTopicId" resultType="Integer">
+        SELECT COUNT(DISTINCT(l_id))
+        FROM `like`
+        WHERE topic_type = 1 AND topic_id = #{topicId}  AND status = 1
+    </select>
+
+    <select id="findPictureLikeCountByTopicId" resultType="Integer">
+        SELECT COUNT(DISTINCT(l_id))
+        FROM `like`
+        WHERE topic_type = 2 AND topic_id = #{topicId} AND status = 1
+    </select>
+
+    <select id="findAll" resultMap="likeMap">
+        SELECT *
+        FROM `like`
+    </select>
+
+</mapper>

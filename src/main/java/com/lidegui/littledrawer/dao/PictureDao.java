@@ -11,7 +11,14 @@ import java.util.List;
  */
 public interface PictureDao {
 
-    public List<Picture> findPictureByTopic(@Param("topic_type") int topicType, @Param("topic_id") int topicId);
-    public List<String> findPictureUrlsByTopicId(int topicId);
-    public List<String> findVideoUrlsByTopicId(int topicId);
+    public int insert(Picture picture);
+    public int deleteById(int pictureId);
+    public int updatePicture(Picture picture);
+    public Picture findById(int pictureId);
+    public List<Picture> findByUserId(int userId);
+    public List<Picture> findPicturesByTopic(@Param("topic_type") int topicType, @Param("topic_id") int topicId);
+    public List<String> findNewsPictureUrlsByTopicId(int topicId);
+    public String findVideoPosterUrlByTopicId(int topicId);
+    public List<Picture> findFunnyPictures();
+    public List<Picture> findAll();
 }

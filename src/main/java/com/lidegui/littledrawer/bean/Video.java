@@ -16,12 +16,11 @@ public class Video {
     private String posterUrl;
     // 视频源
     private String sourceUrl;
-    private Like like;
+    private int like;
     private int click;
     private Date date;
     private int typeIndex;
     private String typeName;
-    private List<Comment> comments;
     private User author;
 
     public int getId() {
@@ -64,11 +63,11 @@ public class Video {
         this.sourceUrl = sourceUrl;
     }
 
-    public Like getLike() {
+    public int getLike() {
         return like;
     }
 
-    public void setLike(Like like) {
+    public void setLike(int like) {
         this.like = like;
     }
 
@@ -102,14 +101,6 @@ public class Video {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public User getAuthor() {

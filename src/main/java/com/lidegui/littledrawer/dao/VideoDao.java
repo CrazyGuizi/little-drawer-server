@@ -16,11 +16,15 @@ public interface VideoDao {
 
     public int updateVideo(Video video);
 
+    public int updateVideoClick(int videoId);
+
     public Video findById(int videoId);
 
-    public List<Video> findAll();
+    public List<Video> findByTypeIndex(int typeIndex);
 
-    public List<Video> findByType(String type);
+    public List<Video> findByTypeName(String typeName);
 
     public List<Video> findByUserId(int userId);
+
+    public List<Video> findAll();
 }

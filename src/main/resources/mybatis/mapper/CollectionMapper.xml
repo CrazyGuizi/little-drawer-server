@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.CollectionDao">
+    <resultMap id="collectionMap" type="MyCollection">
+        <id property="id" column="cl_id"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicId" column="topic_id"/>
+
+        <association property="collector" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+
+    </resultMap>
+
+    <insert id="insert" parameterType="MyCollection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO collection (date, topic_type, topic_id, user_id)
+        VALUES (#{date,javaType=DATE,jdbcType=TIMESTAMP}, #{topicType}, #{topicId}, #{collector.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM collection
+        WHERE cl_id = #{collectionId}
+    </delete>
+
+    <update id="updateCollection" parameterType="MyCollection">
+        UPDATE collection
+        SET
+            date       = #{date, javaType=Date, jdbcType=TIMESTAMP},
+            topic_type = #{topicType},
+            topic_id   = #{topicId},
+            user_id    = #{collector.id}
+        WHERE cl_id = #{id}
+    </update>
+
+    <select id="findById" resultMap="collectionMap">
+        SELECT *
+        FROM collection
+        WHERE cl_id = #{collectionId}
+    </select>
+
+    <select id="findByUserId" resultMap="collectionMap">
+        SELECT *
+        FROM collection
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="findUserCollectionStatus" resultMap="collectionMap">
+        SELECT *
+        FROM collection
+        WHERE topic_type = #{topicType} AND topic_id = #{topicId} AND user_id = #{userId}
+    </select>
+
+    <select id="findVideoCollectionCountByTopicId" resultType="Integer">
+        SELECT COUNT(DISTINCT(cl_id))
+        FROM collection
+        WHERE topic_type = 1 AND topic_id = #{topicId}
+    </select>
+
+    <select id="findPictureCollectionCountByTopicId" resultType="Integer">
+        SELECT COUNT(DISTINCT(cl_id))
+        FROM collection
+        WHERE topic_type = 2 AND topic_id = #{topicId}
+    </select>
+
+    <select id="findAll" resultMap="collectionMap">
+        SELECT *
+        FROM collection
+    </select>
+
+</mapper>

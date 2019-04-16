@@ -31,8 +31,10 @@
     </insert>
 
     <delete id="deleteById">
-        DELETE FROM picture
-        WHERE p_id = #{pictureId}
+        DELETE picture, file
+        FROM picture LEFT JOIN file
+        ON picture.p_id = file.media_id
+        WHERE p_id = #{pictureId};
     </delete>
 
     <update id="updatePicture" parameterType="Picture">

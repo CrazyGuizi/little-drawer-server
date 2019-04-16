@@ -37,6 +37,12 @@
         WHERE u_id = #{id}
     </select>
 
+    <select id="findUserByToken" resultMap="userResultMap">
+        SELECT *
+        FROM user
+        WHERE token = #{token}
+    </select>
+
     <select id="findUserInfoById" resultMap="userResultMap">
         SELECT u_id, nick_name,icon_url
         FROM user

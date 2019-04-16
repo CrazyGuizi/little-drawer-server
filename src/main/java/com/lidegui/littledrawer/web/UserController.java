@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @Author: lidegui
@@ -50,7 +53,13 @@ public class UserController {
     public BaseResponse login(@RequestBody User u) {
         User user = mUserService.login(u.getUsername(), u.getPassword());
         if (user != null) {
-            return BaseResponse.generateSuccess("登录成功", user);
+            // 更新token
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            user = mUserService.updateUser(user);
+            if (user != null) {
+                return BaseResponse.generateSuccess("登录成功", user);
+            }
         }
 
         return BaseResponse.generateFail("账号密码出错");
@@ -60,6 +69,8 @@ public class UserController {
     @RequestMapping(value = Constant.API_USER_REGISTER, method = RequestMethod.POST)
     public BaseResponse register(@RequestBody User user) {
         user.setIconUrl(Util.getIconRandom());
+        String token = UUID.randomUUID().toString();
+        user.setToken(token);
         User register = mUserService.register(user);
         if (register != null) {
             return BaseResponse.generateSuccess("注册成功", register);

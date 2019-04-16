@@ -24,6 +24,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findUserByToken(String token) {
+        return mUserDao.findUserByToken(token);
+    }
+
+    @Override
     public User register(User user) {
         // 用户不存在
         if (isUserExit(user.getUsername()) == null) {

@@ -1,10 +1,16 @@
 package com.lidegui.littledrawer.web;
 
 import com.github.pagehelper.PageHelper;
+import com.lidegui.littledrawer.bean.File;
+import com.lidegui.littledrawer.bean.Picture;
 import com.lidegui.littledrawer.bean.Video;
+import com.lidegui.littledrawer.dto.AddVideo;
 import com.lidegui.littledrawer.dto.BaseResponse;
+import com.lidegui.littledrawer.service.FileService;
+import com.lidegui.littledrawer.service.PictureService;
 import com.lidegui.littledrawer.service.VideoService;
 import com.lidegui.littledrawer.util.Constant;
+import com.lidegui.littledrawer.util.TopicEnum;
 import com.lidegui.littledrawer.util.Util;
 import com.lidegui.littledrawer.util.VideoType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +35,17 @@ public class VideoController {
     @Autowired
     private VideoService mVideoService;
 
+    @Autowired
+    private FileService mFileService;
+
+    @Autowired
+    private PictureService mPictureService;
+
     @RequestMapping(value = Constant.API_VIDEO_ADD_VIDEO, method = RequestMethod.POST)
-    public BaseResponse addVideo(@RequestBody Video video) {
-        if (video != null) {
+    public BaseResponse addVideo(@RequestBody AddVideo addVideo) {
+        if (addVideo != null) {
             // 保证类别索引和名字一一对应
+            Video video = addVideo.getVideo();
             VideoType type;
             if (video.getTypeIndex() > 0) {
                 type = Util.getVideoType(video.getTypeIndex());
@@ -51,12 +64,22 @@ public class VideoController {
             // 让主键自增长
             video.setId(0);
             video.setDate(Util.getDateNow());
-            Video addVideo = mVideoService.addVideo(video);
+            video = mVideoService.addVideo(video);
 
-            if (addVideo != null) {
+            if (video != null) {
+                // 更新视频源文件mediaId
+                File file = addVideo.getVideoSource();
+                file.setMediaId(video.getId());
+                mFileService.updateFileMediaId(file);
+
+                // 更新视频封面图片的topicId
+                Picture videoPoster = addVideo.getVideoPoster();
+                videoPoster.setTopicType(TopicEnum.VIDEO.topicType);
+                videoPoster.setTopicId(video.getId());
+                mPictureService.updatePicture(videoPoster);
+
                 return BaseResponse.generateSuccess("视频发布成功", addVideo);
             }
-
         }
 
         return BaseResponse.generateFail("视频发布失败");

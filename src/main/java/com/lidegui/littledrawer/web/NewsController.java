@@ -2,15 +2,17 @@ package com.lidegui.littledrawer.web;
 
 import com.github.pagehelper.PageHelper;
 import com.lidegui.littledrawer.bean.News;
+import com.lidegui.littledrawer.bean.Picture;
+import com.lidegui.littledrawer.dto.AddNews;
 import com.lidegui.littledrawer.dto.BaseResponse;
 import com.lidegui.littledrawer.service.NewsService;
+import com.lidegui.littledrawer.service.PictureService;
 import com.lidegui.littledrawer.util.Constant;
+import com.lidegui.littledrawer.util.TopicEnum;
 import com.lidegui.littledrawer.util.Util;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -25,13 +27,32 @@ public class NewsController {
 
     @Autowired
     private NewsService mNewsService;
+    @Autowired
+    private PictureService mPictureService;
 
     @RequestMapping(value = Constant.API_NEWS_ADD_NEWS, method = RequestMethod.POST)
-    public BaseResponse addNews(@RequestBody News news) {
-        news.setDate(Util.getDateNow());
-        News addNews = mNewsService.addNews(news);
+    public BaseResponse addNews(@RequestBody AddNews addNews) {
         if (addNews != null) {
-            return BaseResponse.generateSuccess("发表成功", addNews);
+            News news = addNews.getNews();
+            // 主键自增长
+            news.setId(0);
+            news.setDate(Util.getDateNow());
+            news = mNewsService.addNews(news);
+            if (news != null) {
+                // 新闻是否有封面，有的话则更新封面图片的topicId，确保该新闻能查找到对应的图片
+                List<Picture> pictureList = addNews.getCoverPictures();
+                if (pictureList != null && pictureList.size() > 0) {
+                    for (Picture picture : pictureList) {
+                        picture.setTopicType(TopicEnum.NEWS.topicType);
+                        picture.setTopicId(news.getId());
+                        mPictureService.updatePicture(picture);
+                    }
+                }
+            } else {
+                return BaseResponse.generateFail("发表失败");
+            }
+
+            return BaseResponse.generateSuccess("发表成功", news);
         }
 
         return BaseResponse.generateFail("发表失败");
@@ -118,7 +139,16 @@ public class NewsController {
         List<News> newsList = null;
 
         if (!Util.isEmpty(column)) {
-            newsList = mNewsService.getNewsByColumn(column);
+            // 根据类别取新闻
+            if (Util.getNewsColumn(column) != null ) {
+                newsList = mNewsService.getNewsByColumn(column);
+            } else if ("推荐".equals(column) || "头条".equals(column)){
+                // 如果是推荐和头条则从全部新闻中取出
+                newsList = mNewsService.getAllNews();
+            } else {
+                // 平台没有该类新闻
+                return BaseResponse.generateFail("平台没有该类新闻");
+            }
         } else {
             newsList = mNewsService.getAllNews();
         }

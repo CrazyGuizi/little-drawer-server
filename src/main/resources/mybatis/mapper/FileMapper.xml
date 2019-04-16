@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.FileDao">
+    <resultMap id="FileMap" type="MyFile">
+        <id property="id" column="f_id"/>
+        <result property="name" column="name"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="mime" column="mime"/>
+        <result property="path" column="path"/>
+        <result property="mediaId" column="media_id"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="MyFile" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file (name, date, mime, path, media_id)
+        VALUES (#{name}, #{date,javaType=DATE,jdbcType=TIMESTAMP}, #{mime}, #{path}, #{mediaId})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM file
+        WHERE f_id = #{fileId}
+    </delete>
+
+    <update id="updateFile" parameterType="MyFile">
+        UPDATE file
+        SET
+            name     = #{name},
+            date       = #{date, javaType=Date, jdbcType=TIMESTAMP},
+            mime = #{mime},
+            path   = #{path},
+            media_id    = #{mediaId}
+        WHERE f_id = #{id}
+    </update>
+
+    <update id="updateFileMediaId" parameterType="MyFile">
+        UPDATE file
+        SET
+            media_id    = #{mediaId}
+        WHERE f_id = #{id}
+    </update>
+
+
+    <select id="findById" resultMap="FileMap">
+        SELECT *
+        FROM file
+        WHERE f_id = #{id}
+    </select>
+
+    <select id="findFileByMediaId" resultMap="FileMap">
+        SELECT *
+        FROM file
+        WHERE media_id = #{mediaId}
+    </select>
+
+    <select id="findPathByMediaId" resultType="String">
+        SELECT path
+        FROM file
+        WHERE media_id = #{mediaId}
+    </select>
+
+    <select id="findAll" resultMap="FileMap">
+        SELECT *
+        FROM file
+    </select>
+
+</mapper>

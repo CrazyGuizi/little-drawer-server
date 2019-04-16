@@ -39,6 +39,8 @@ public interface UserDao {
      */
     User findUserById(Integer id);
 
+    User findUserByToken(String token);
+
     /**
      * 查询用户信息（不包括敏感信息）
      * @param id

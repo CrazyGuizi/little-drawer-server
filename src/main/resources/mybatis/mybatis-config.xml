@@ -30,6 +30,7 @@
         <typeAlias alias="Like" type="com.lidegui.littledrawer.bean.Like" />
         <typeAlias alias="MyCollection" type="com.lidegui.littledrawer.bean.Collection" />
         <typeAlias alias="Picture" type="com.lidegui.littledrawer.bean.Picture" />
+        <typeAlias alias="MyFile" type="com.lidegui.littledrawer.bean.File" />
     </typeAliases>
 
 </configuration>

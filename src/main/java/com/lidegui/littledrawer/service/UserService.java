@@ -14,6 +14,8 @@ import java.util.List;
 public interface UserService {
     public User findUserById(int id);
 
+    public User findUserByToken(String token);
+
     public User register(User user);
 
     public User login(String u, String p);

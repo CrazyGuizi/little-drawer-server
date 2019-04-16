@@ -1,5 +1,7 @@
 package com.lidegui.littledrawer.util;
 
+import java.io.File;
+
 /**
  * @Author: lidegui
  * @Date:Created in 23:50 2019/4/12
@@ -10,21 +12,27 @@ public class Constant {
     public static final String MSG_SUCCESS = "操作成功";
     public static final String MSG_FAIL = "操作失败";
 
-    public static final String[] USER_DEFAULT_ICON = new String[] {"https://hbimg.huabanimg.com/0cd458748df3517e0e0ab07e9f669ff36d52fa1532f0f-ra8CU6_fw658",
-            "https://hbimg.huabanimg.com/5845718d9c6fc5f6e492d6351ff34626c1e821a53004f-PPjNj6_fw658",
-    "https://hbimg.huabanimg.com/b450e9cc2e3d3e96b5437fb745eb3f1d686653a34aedd-onv08G_fw658",
-    "https://hbimg.huabanimg.com/7a8bdf3d8748587564c8c079fd5b0c70b3278b5a37271-oOYBGZ_fw658",
-    "https://hbimg.huabanimg.com/9d9a273cf7ce7a1ccbd87301f86e459cebd4b3853edf3-ynvIFn_fw658",
-    "https://hbimg.huabanimg.com/4e5a94e9240a099b462d5e5371d137ddd0eb097743947-vpjnd3_fw658",
-    "https://hbimg.huabanimg.com/4f1b23073e6162f6cc057644da466bbb2980bce451cad-MRi6mO_fw658",
-    "https://hbimg.huabanimg.com/dfc5922d4a92172cbd789202b7ed1b0b98c6bcfa4343b-aA0e53_fw658"};
-    public static final String s = "";
+    public static final String LOCALHOST = "http://127.0.0.1:8080";
+
+    public static final String[] USER_DEFAULT_ICON =
+            new String[] {"http://wx4.sinaimg.cn/mw690/6a04b428ly1g19akwia0rg209b09qwgf.gif",
+            "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19al1td90g209q08sq4i.gif",
+    "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19akvdvgtg209q07bmyf.gif",
+    "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19akw738rg209q07dgn0.gif",
+    "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19akwy67ng208d09q0ua.gif",
+    "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19akzesteg207e09q761.gif",
+    "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19al0c9iog209q0773zw.gif",
+    "http://wx4.sinaimg.cn/mw690/6a04b428ly1g19al0qbjag209q09q0u7.gif"};
+
+    public static final String RESOURCE_IMAGE_PATH = "classpath:static" + File.separator + "image";
+    public static final String RESOURCE_VIDEO_PATH = "classpath:static" + File.separator + "video";
 
     public static final String API_USER = "api/user";
     public static final String API_NEWS = "api/news";
     public static final String API_COMMON = "api/common";
     public static final String API_VIDEO = "api/video";
     public static final String API_PICTURE = "api/picture";
+    public static final String API_RESOURCE = "api/resource";
 
     public static final String API_USER_VALIDATE_USERNAME = "/validateUsername";
     public static final String API_USER_LOGIN = "/login";
@@ -72,6 +80,14 @@ public class Constant {
     public static final String API_PICTURE_GET_PICTURE_BY_ID = "/getPictureById";
     public static final String API_PICTURE_GET_FUNNY_PICTURES_RANDOM = "/getFunnyPicturesRandom";
     public static final String API_PICTURE_GET_PICTURES_BY_USER_ID = "/getPicturesByUserId";
+
+
+
+    public static final String API_RESOURCE_UPLOAD_PICTURE = "upload/picture";
+    public static final String API_RESOURCE_UPLOAD_VIDEO = "upload/video";
+    public static final String API_RESOURCE_DOWNLOAD_PICTURE = "download/picture";
+    public static final String API_RESOURCE_DOWNLOAD_VIDEO = "download/video";
+
 
 
 }

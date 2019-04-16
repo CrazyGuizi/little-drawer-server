@@ -30,8 +30,26 @@ public class PictureController {
 
 
     @RequestMapping(value = Constant.API_PICTURE_ADD_PICTURE, method = RequestMethod.POST)
-    public BaseResponse addCollection(@RequestBody Picture picture) {
+    public BaseResponse addPicture(@RequestBody Picture picture) {
         if (picture != null) {
+            if (picture.getId()> 0) {
+                // 如果图片已经存在，则更新图片信息
+                Picture pictureById = mPictureService.getPictureById(picture.getId());
+                if (pictureById != null) {
+                    if (pictureById.getDate() != null) {
+                        picture.setDate(pictureById.getDate());
+                    } else {
+                        picture.setDate(Util.getDateNow());
+                    }
+                    pictureById = mPictureService.updatePicture(picture);
+                    // 更新成功
+                    if (pictureById != null) {
+                        return BaseResponse.generateSuccess("添加成功", pictureById);
+                    } else {
+                        return BaseResponse.generateFail("添加失败");
+                    }
+                }
+            }
             picture.setDate(Util.getDateNow());
             Picture addPicture = mPictureService.addPicture(picture);
             if (addPicture != null) {

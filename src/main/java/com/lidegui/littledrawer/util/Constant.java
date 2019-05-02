@@ -12,7 +12,7 @@ public class Constant {
     public static final String MSG_SUCCESS = "操作成功";
     public static final String MSG_FAIL = "操作失败";
 
-    public static final String LOCALHOST = "http://127.0.0.1:8080";
+    public static final String LOCALHOST = "http://192.168.43.3:8080";
 
     public static final String[] USER_DEFAULT_ICON =
             new String[] {"http://wx4.sinaimg.cn/mw690/6a04b428ly1g19akwia0rg209b09qwgf.gif",

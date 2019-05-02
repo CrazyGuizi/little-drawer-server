@@ -8,6 +8,7 @@ import com.lidegui.littledrawer.bean.Comment;
 import com.lidegui.littledrawer.bean.Like;
 import com.lidegui.littledrawer.bean.Reply;
 import com.lidegui.littledrawer.dto.BaseResponse;
+import com.lidegui.littledrawer.interceptor.LogInterceptor;
 import com.lidegui.littledrawer.service.CollectionService;
 import com.lidegui.littledrawer.service.CommentService;
 import com.lidegui.littledrawer.service.LikeService;
@@ -76,7 +77,9 @@ public class CommonController {
             List<Comment> comments = mCommentService.getCommentsByTopic(Integer.parseInt(type), Integer.parseInt(id));
 
             if (comments != null && comments.size() > 0) {
-                return BaseResponse.generateSuccess("获取评论成功", comments);
+                BaseResponse success = BaseResponse.generateSuccess("获取评论成功", comments);
+                Util.getRequest().setAttribute(LogInterceptor.LOG_RETURN, JSON.toJSONString(success));
+                return success;
             } else {
                 return BaseResponse.generateFail("暂无评论");
             }
@@ -166,14 +169,12 @@ public class CommonController {
 
     @RequestMapping(value = Constant.API_COMMON_GET_LIKE_STATUS, method = RequestMethod.POST)
     public BaseResponse getLikeStatus(@RequestBody Map<String, Integer> map) {
-        int topicType = 0;
-        int topicId = 0;
-        int userId = 0;
-        try {
-            topicType = map.get("topicType");
-            topicId = map.get("topicId");
-            userId = map.get("userId");
-        } catch (Exception e) {
+        int topicType = map.get("topicType");
+        int topicId = map.get("topicId");
+        int userId = map.get("userId");
+
+        if (!map.containsKey("topicType") || !map.containsKey("topicId") ||
+                !map.containsKey("userId")) {
             return BaseResponse.generateFail("请求参数有误");
         }
 
@@ -207,27 +208,36 @@ public class CommonController {
 
     @RequestMapping(value = Constant.API_COMMON_CANCEL_COLLECTION, method = RequestMethod.POST)
     public BaseResponse cancelCollection(@RequestBody Map<String, Integer> map) {
-        int id = map.get("collectionId");
-        if (id > 0) {
+
+        if (map.containsKey("collectionId")) {
+            int id = map.get("collectionId");
             int i = mCollectionService.deleteCollection(id);
             if (i > 0) {
                 return BaseResponse.generateSuccess("取消收藏成功", null);
             }
+        } else if (map.containsKey("topicType") && map.containsKey("topicId") &&
+                map.containsKey("userId")) {
+            int topicType = map.get("topicType");
+            int topicId = map.get("topicId");
+            int userId = map.get("userId");
+            if (mCollectionService.deleteCollection(topicType, topicId, userId) > 0) {
+                return BaseResponse.generateSuccess("取消收藏成功", null);
+            }
         }
+
 
         return BaseResponse.generateFail("取消收藏失败");
     }
 
     @RequestMapping(value = Constant.API_COMMON_GET_COLLECTION_STATUS, method = RequestMethod.POST)
     public BaseResponse getCollectionStatus(@RequestBody Map<String, Integer> map) {
-        int topicType = 0;
-        int topicId = 0;
-        int userId = 0;
-        try {
-            topicType = map.get("topicType");
-            topicId = map.get("topicId");
-            userId = map.get("userId");
-        } catch (Exception e) {
+
+        int topicType = map.get("topicType");
+        int topicId = map.get("topicId");
+        int userId = map.get("userId");
+
+        if (!map.containsKey("topicType") || !map.containsKey("topicId") ||
+                !map.containsKey("userId")) {
             return BaseResponse.generateFail("请求参数有误");
         }
 
@@ -236,7 +246,7 @@ public class CommonController {
             if (status != null) {
                 return BaseResponse.generateSuccess("获取成功", status);
             } else {
-                return BaseResponse.generateFail("用户还没有收藏");
+                return BaseResponse.generateFail("你还没有收藏");
             }
         }
 

@@ -195,6 +195,12 @@ public class Util {
         return token;
     }
 
+    public static HttpServletRequest getRequest() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        return request;
+    }
+
 
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println(getDateNow());

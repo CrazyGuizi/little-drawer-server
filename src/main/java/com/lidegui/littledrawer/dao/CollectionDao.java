@@ -12,6 +12,9 @@ import java.util.List;
 public interface CollectionDao {
     public int insert(Collection collection);
     public int deleteById(int collectionId);
+    public int deleteByTopic(@Param("topicType")int topicType,
+                             @Param("topicId") int topicId,
+                             @Param("userId") int userId);
     public int updateCollection(Collection like);
     public Collection findById(int collectionId);
     public List<Collection> findByUserId(int userId);

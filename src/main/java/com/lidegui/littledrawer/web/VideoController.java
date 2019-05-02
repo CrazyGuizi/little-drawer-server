@@ -1,11 +1,13 @@
 package com.lidegui.littledrawer.web;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.lidegui.littledrawer.bean.File;
 import com.lidegui.littledrawer.bean.Picture;
 import com.lidegui.littledrawer.bean.Video;
 import com.lidegui.littledrawer.dto.AddVideo;
 import com.lidegui.littledrawer.dto.BaseResponse;
+import com.lidegui.littledrawer.interceptor.LogInterceptor;
 import com.lidegui.littledrawer.service.FileService;
 import com.lidegui.littledrawer.service.PictureService;
 import com.lidegui.littledrawer.service.VideoService;
@@ -139,8 +141,15 @@ public class VideoController {
      */
     @RequestMapping(value = Constant.API_VIDEO_GET_VIDEOS_BY_TYPE, method = RequestMethod.POST)
     public BaseResponse getVideosByType(@RequestBody Map<String, String> map) {
-        String typeIndex = map.get("typeIndex");
-        String typeName = map.get("typeName");
+        String typeIndex = null;
+        String typeName = null;
+        if (map.containsKey("typeIndex")) {
+            typeIndex = map.get("typeIndex");
+        }
+        if (map.containsKey("typeName")) {
+            typeName = map.get("typeName");
+
+        }
         String pageNum = map.get("pageNum");
         String pageSize = map.get("pageSize");
         List<Video> videos = null;
@@ -163,7 +172,9 @@ public class VideoController {
         }
 
         if (videos != null && videos.size() > 0) {
-            return BaseResponse.generateSuccess("视频获取成功", videos);
+            BaseResponse success = BaseResponse.generateSuccess("视频获取成功", videos);
+            Util.getRequest().setAttribute(LogInterceptor.LOG_RETURN, JSON.toJSONString(success));
+            return success;
         } else {
             return BaseResponse.generateFail("暂无该类视频o(╯□╰)o");
         }
@@ -172,8 +183,15 @@ public class VideoController {
 
     @RequestMapping(value = Constant.API_VIDEO_GET_VIDEOS_RANDOM, method = RequestMethod.POST)
     public BaseResponse getVideosRandom(@RequestBody Map<String, String> map) {
-        String typeIndex = map.get("typeIndex");
-        String typeName = map.get("typeName");
+        String typeIndex = null;
+        String typeName = null;
+        if (map.containsKey("typeIndex")) {
+            typeIndex = map.get("typeIndex");
+        }
+        if (map.containsKey("typeName")) {
+            typeName = map.get("typeName");
+
+        }
         String pageNum = map.get("pageNum");
         String pageSize = map.get("pageSize");
         List<Video> videos = null;

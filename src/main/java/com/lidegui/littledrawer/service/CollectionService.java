@@ -15,6 +15,8 @@ public interface CollectionService {
 
     public int deleteCollection(int collectionId);
 
+    public int deleteCollection(int topicType, int topicId, int userId);
+
     public Collection updateCollection(Collection collection);
 
     public Collection getCollectionById(int collectionId);

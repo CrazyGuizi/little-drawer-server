@@ -36,6 +36,11 @@ public class CollectionServiceImpl implements CollectionService {
     }
 
     @Override
+    public int deleteCollection(int topicType, int topicId, int userId) {
+        return mCollectionDao.deleteByTopic(topicType, topicId, userId);
+    }
+
+    @Override
     public Collection updateCollection(Collection collection) {
         if (mCollectionDao.updateCollection(collection) > 0) {
             return mCollectionDao.findById(collection.getId());

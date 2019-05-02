@@ -1,10 +1,12 @@
 package com.lidegui.littledrawer.web;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.lidegui.littledrawer.bean.News;
 import com.lidegui.littledrawer.bean.Picture;
 import com.lidegui.littledrawer.dto.AddNews;
 import com.lidegui.littledrawer.dto.BaseResponse;
+import com.lidegui.littledrawer.interceptor.LogInterceptor;
 import com.lidegui.littledrawer.service.NewsService;
 import com.lidegui.littledrawer.service.PictureService;
 import com.lidegui.littledrawer.util.Constant;
@@ -14,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -109,7 +112,9 @@ public class NewsController {
 
             List<News> newsList = mNewsService.getNewsByColumn(col);
             if (newsList != null && newsList.size() > 0) {
-                return BaseResponse.generateSuccess("获取成功", newsList);
+                BaseResponse response = BaseResponse.generateSuccess("获取成功", newsList);
+                Util.getRequest().setAttribute(LogInterceptor.LOG_RETURN, JSON.toJSONString(response));
+                return response;
             }
         }
 

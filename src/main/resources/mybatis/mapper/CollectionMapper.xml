@@ -23,6 +23,11 @@
         WHERE cl_id = #{collectionId}
     </delete>
 
+    <delete id="deleteByTopic">
+        DELETE FROM collection
+        WHERE topic_type = #{topicType} AND topic_id = #{topicId} AND user_id = #{userId}
+    </delete>
+
     <update id="updateCollection" parameterType="MyCollection">
         UPDATE collection
         SET

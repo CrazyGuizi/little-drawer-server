@@ -3,17 +3,12 @@ package com.lidegui.littledrawer.web;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.lidegui.littledrawer.bean.Collection;
-import com.lidegui.littledrawer.bean.Comment;
-import com.lidegui.littledrawer.bean.Like;
-import com.lidegui.littledrawer.bean.Reply;
+import com.lidegui.littledrawer.bean.*;
 import com.lidegui.littledrawer.dto.BaseResponse;
 import com.lidegui.littledrawer.interceptor.LogInterceptor;
-import com.lidegui.littledrawer.service.CollectionService;
-import com.lidegui.littledrawer.service.CommentService;
-import com.lidegui.littledrawer.service.LikeService;
-import com.lidegui.littledrawer.service.ReplyService;
+import com.lidegui.littledrawer.service.*;
 import com.lidegui.littledrawer.util.Constant;
+import com.lidegui.littledrawer.util.ReportTopic;
 import com.lidegui.littledrawer.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +36,12 @@ public class CommonController {
 
     @Autowired
     private CollectionService mCollectionService;
+
+    @Autowired
+    private ReportService mReportService;
+
+    @Autowired
+    private NewsService mNewsService;
 
     /**************************************评论相关******************************************/
     @RequestMapping(value = Constant.API_COMMON_ADD_COMMENT, method = RequestMethod.POST)
@@ -251,5 +252,112 @@ public class CommonController {
         }
 
         return BaseResponse.generateFail("获取失败");
+    }
+
+
+    /**************************************举报相关******************************************/
+
+    @RequestMapping(value = Constant.API_COMMON_ADD_REPORT, method = RequestMethod.POST)
+    public BaseResponse addReport(@RequestBody Report report) {
+        if (report != null) {
+
+            Report r = mReportService.getReportByTopicIdAndReporter(report.getTopicId(),
+                    report.getReporter().getId());
+            // 同一个人对同一个东西重复举报
+            if (r != null) {
+                return BaseResponse.generateSuccess("举报成功", r);
+            } else {
+                if (Util.isEmpty(report.getReason())) {
+                    report.setReason("含有敏感内容");
+                }
+                report.setDate(Util.getDateNow());
+                Report addReport = mReportService.addReport(report);
+                if (addReport != null) {
+                    return BaseResponse.generateSuccess("举报成功", addReport);
+                }
+            }
+        }
+        return BaseResponse.generateFail("举报失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_DELETE_REPORT, method = RequestMethod.POST)
+    public BaseResponse deleteReport(@RequestBody Map<String, Integer> map) {
+        if (map.containsKey("reportId")) {
+            int reportId = map.get("reportId");
+            if (mReportService.deleteReport(reportId) > 0) {
+                return BaseResponse.generateSuccess("删除成功", null);
+            }
+        }
+
+        return BaseResponse.generateFail("删除失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_GET_ALL_REPORTS, method = RequestMethod.POST)
+    public BaseResponse getAllReports() {
+        List<Report> allReports = mReportService.getAllReports();
+        if (allReports != null && !allReports.isEmpty()) {
+            return BaseResponse.generateSuccess("获取成功", allReports);
+        }
+
+        return BaseResponse.generateFail("获取失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_GET_REPORTS_BY_TOPIC, method = RequestMethod.POST)
+    public BaseResponse getReportsByTopic(@RequestBody Map<String, String> map) {
+        if (map.containsKey("topicName")) {
+            String topicName = map.get("topicName");
+            if (Util.isContainReportTopic(topicName)) {
+                List<Report> reports = mReportService.getReportsByTopic(topicName);
+                if (reports != null && !reports.isEmpty()) {
+                    return BaseResponse.generateSuccess("获取成功", reports);
+                }
+            }
+        }
+
+        return BaseResponse.generateFail("获取失败");
+    }
+
+    @RequestMapping(value = Constant.API_COMMON_ACCEPT_REPORT, method = RequestMethod.POST)
+    public BaseResponse acceptReport(@RequestBody Map<String, String> map) {
+        if (map.containsKey("topicName") && map.containsKey("topicId")) {
+            String topicName = map.get("topicName");
+            int topicId = Integer.parseInt(map.get("topicId"));
+
+            // 举报新闻
+            if (ReportTopic.NEWS.topicName.equals(topicName)) {
+                News news = mNewsService.getNewsById(topicId);
+                if (news != null) {
+                    news.setContent("新闻含有敏感内容，不给予展示");
+                }
+                News updateNews = mNewsService.updateNews(news);
+                if (updateNews != null) {
+                    Report report = mReportService.getReportByTopicNameAndTopicId(topicId, topicName);
+                    mReportService.deleteReport(report.getId());
+                    return BaseResponse.generateSuccess("处理成功,该新闻内容不展示");
+                }
+            } else if (ReportTopic.COMMENT.topicName.equals(topicName)) {
+                // 举报评论
+                Comment comment = mCommentService.getCommentById(topicId);
+                if (comment != null) {
+                    if (mCommentService.deleteComment(comment.getId()) > 0) {
+                        Report report = mReportService.getReportByTopicNameAndTopicId(topicId, topicName);
+                        mReportService.deleteReport(report.getId());
+                        return BaseResponse.generateSuccess("处理成功，该评论已删除", null);
+                    }
+                }
+            } else if (ReportTopic.REPLY.topicName.equals(topicName)) {
+                // 举报回复
+                Reply reply = mReplyService.getReplyById(topicId);
+                if (reply != null) {
+                    if (mReplyService.deleteReply(reply.getId()) > 0) {
+                        Report report = mReportService.getReportByTopicNameAndTopicId(topicId, topicName);
+                        mReportService.deleteReport(report.getId());
+                        return BaseResponse.generateSuccess("处理成功，该回复已删除");
+                    }
+                }
+            }
+        }
+
+        return BaseResponse.generateFail("操作失败");
     }
 }

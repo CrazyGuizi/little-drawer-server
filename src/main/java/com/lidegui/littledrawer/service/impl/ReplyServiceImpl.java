@@ -33,6 +33,11 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
+    public Reply getReplyById(int replyId) {
+        return mReplyDao.findReplyById(replyId);
+    }
+
+    @Override
     public List<Reply> getReplysByCommentId(int commentId) {
         return mReplyDao.findReplysByCommentId(commentId);
     }

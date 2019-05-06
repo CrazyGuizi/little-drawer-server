@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lidegui.littledrawer.dao.ReportDao">
+
+    <resultMap id="ReportMap" type="Report">
+        <id property="id" column="re_id"/>
+        <result property="reason" column="reason"/>
+        <result property="date" javaType="Date" jdbcType="TIMESTAMP" column="date"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="topicId" column="topic_id"/>
+
+        <association property="reporter" column="user_id" javaType="User"
+                     select="com.lidegui.littledrawer.dao.UserDao.findUserInfoById"/>
+    </resultMap>
+
+    <sql id="sortByDate">
+        ORDER BY date ASC
+    </sql>
+
+    <insert id="insert" parameterType="Report" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO report(reason, date, topic_name, topic_id, user_id)
+        VALUES (#{reason}, #{date, javaType=Date, jdbcType=TIMESTAMP},
+        #{topicName}, #{topicId}, #{reporter.id})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM report
+        WHERE re_id = #{reportId}
+    </delete>
+
+    <update id="updateReport" parameterType="Report">
+        UPDATE report SET
+        reason = #{reason},
+        date = #{date, javaType=Date, jdbcType=TIMESTAMP},
+        topic_name = #{topicName},
+        topic_id = #{topicId},
+        user_id = #{reporter.id}
+        WHERE re_id = #{id}
+    </update>
+
+    <select id="findReportById" resultMap="ReportMap">
+        SELECT * FROM report
+        WHERE re_id = #{reportId}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findAllReports" resultMap="ReportMap">
+        SELECT * FROM report
+    </select>
+
+    <select id="findReportsByTopic" resultMap="ReportMap">
+        SELECT * FROM report
+        WHERE topic_name = #{topicName}
+        <include refid="sortByDate"/>
+    </select>
+
+    <select id="findReportByTopicIdAndReporter" resultMap="ReportMap">
+        SELECT * FROM report
+        WHERE topic_id = #{topicId} AND user_id = #{reporterId}
+    </select>
+    <select id="findReportByTopicNameAndTopicId" resultMap="ReportMap">
+        SELECT * FROM report
+        WHERE topic_id = #{topicId} AND topic_name = #{topicName}
+    </select>
+
+</mapper>

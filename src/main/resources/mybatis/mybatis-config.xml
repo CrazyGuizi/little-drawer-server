@@ -31,6 +31,7 @@
         <typeAlias alias="MyCollection" type="com.lidegui.littledrawer.bean.Collection" />
         <typeAlias alias="Picture" type="com.lidegui.littledrawer.bean.Picture" />
         <typeAlias alias="MyFile" type="com.lidegui.littledrawer.bean.File" />
+        <typeAlias alias="Report" type="com.lidegui.littledrawer.bean.Report" />
     </typeAliases>
 
 </configuration>

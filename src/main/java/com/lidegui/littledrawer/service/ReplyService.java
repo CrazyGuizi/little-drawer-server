@@ -14,5 +14,7 @@ public interface ReplyService {
 
     public int deleteReply(int replyId);
 
+    public Reply getReplyById(int replyId);
+
     public List<Reply> getReplysByCommentId(int commentId);
 }

@@ -64,6 +64,11 @@ public class Constant {
     public static final String API_COMMON_ADD_COLLECTION = "/addCollection";
     public static final String API_COMMON_CANCEL_COLLECTION = "/cancelCollection";
     public static final String API_COMMON_GET_COLLECTION_STATUS = "/getCollectionStatus";
+    public static final String API_COMMON_ADD_REPORT = "/addReport";
+    public static final String API_COMMON_DELETE_REPORT = "/deleteReport";
+    public static final String API_COMMON_GET_ALL_REPORTS = "/getAllReports";
+    public static final String API_COMMON_GET_REPORTS_BY_TOPIC = "/getReportsByTopic";
+    public static final String API_COMMON_ACCEPT_REPORT = "/acceptReport";
 
 
     public static final String API_VIDEO_ADD_VIDEO = "/addVideo";

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50718
 File Encoding         : 65001
 
-Date: 2019-05-02 12:20:48
+Date: 2019-05-06 22:07:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -46,7 +46,7 @@ CREATE TABLE `comment` (
   KEY `user_id` (`user_id`),
   KEY `topic_id` (`topic_id`),
   CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`u_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for file
@@ -78,7 +78,7 @@ CREATE TABLE `like` (
   KEY `user_id` (`user_id`),
   KEY `topic_id` (`topic_id`),
   CONSTRAINT `like_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `user` (`u_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for news
@@ -137,7 +137,23 @@ CREATE TABLE `reply` (
   CONSTRAINT `reply_ibfk_1` FOREIGN KEY (`from_user_id`) REFERENCES `user` (`u_id`),
   CONSTRAINT `reply_ibfk_2` FOREIGN KEY (`comment_id`) REFERENCES `comment` (`c_id`),
   CONSTRAINT `reply_ibfk_3` FOREIGN KEY (`to_user_id`) REFERENCES `user` (`u_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for report
+-- ----------------------------
+DROP TABLE IF EXISTS `report`;
+CREATE TABLE `report` (
+  `re_id` int(11) NOT NULL AUTO_INCREMENT,
+  `reason` varchar(255) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `topic_name` varchar(255) DEFAULT NULL,
+  `topic_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`re_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `report_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`u_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user

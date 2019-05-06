@@ -212,4 +212,27 @@ public class Util {
         }
     }
 
+    public static boolean isContainReportTopic(String topicName) {
+        boolean isContain = false;
+
+        // 举报新闻
+        if (ReportTopic.NEWS.topicName.equals(topicName)) {
+            isContain = true;
+        }else if (ReportTopic.VIDEO.topicName.equals(topicName)) {
+            // 举报视频
+            isContain = true;
+        } else if (ReportTopic.PICTURE.topicName.equals(topicName)) {
+            // 举报图片
+            isContain = true;
+        } else if (ReportTopic.COMMENT.topicName.equals(topicName)) {
+            // 举报评论
+            isContain = true;
+        } else if (ReportTopic.REPLY.topicName.equals(topicName)) {
+            // 举报回复
+            isContain = true;
+        }
+
+        return isContain;
+    }
+
 }
